@@ -4,7 +4,17 @@
 ---
 
 name: Test & Build
-on: [push, pull_request]
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - v*
+  pull_request:
+    branches:
+      - main
+
 jobs:
 
   tests:
@@ -13,16 +23,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install dependencies
+        run: |
+          dnf install -y pre-commit git krb5-devel
+          pip install poetry
+
       - name: Mark the directory as safe for git
         run: git config --global --add safe.directory $PWD
-
-      - name: Install RPM dependencies
-        run: |
-          dnf install -y gettext
-
-      - name: Install base Python dependencies
-        run: |
-          python3 -m pip install --upgrade tox poetry
 
       - name: execute tox
         run: tox
@@ -49,7 +56,7 @@ jobs:
         run: python3 -m build
 
       - name: Store the distribution packages
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: python-package-distributions
           path: dist/
@@ -69,7 +76,7 @@ jobs:
 
     steps:
       - name: Download all the dists
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: python-package-distributions
           path: dist/
@@ -89,7 +96,7 @@ jobs:
 
     steps:
       - name: Download all the dists
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: python-package-distributions
           path: dist/
@@ -102,7 +109,7 @@ jobs:
             ./dist/*.whl
 
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: dist/*
           fail_on_unmatched_files: true

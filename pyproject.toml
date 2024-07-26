@@ -38,7 +38,15 @@ ruff = ">=0.0.253"
 reuse = ">=1.1.0"
 
 [tool.poetry.plugins."fedora.messages"]
-"mirrormanager.new" = "mirrormanager_messages.thing:NewThingV1"
+"mirrormanager.site.deleted.v1" = "mirrormanager_messages.site:SiteDeletedV1"
+"mirrormanager.site.deleted.v2" = "mirrormanager_messages.site:SiteDeletedV2"
+"mirrormanager.host.added.v1" = "mirrormanager_messages.host:HostAddedV1"
+"mirrormanager.host.added.v2" = "mirrormanager_messages.host:HostAddedV2"
+"mirrormanager.host.deleted.v1" = "mirrormanager_messages.host:HostDeletedV1"
+"mirrormanager.host.deleted.v2" = "mirrormanager_messages.host:HostDeletedV2"
+"mirrormanager.host.updated.v1" = "mirrormanager_messages.host:HostUpdatedV1"
+"mirrormanager.host.updated.v2" = "mirrormanager_messages.host:HostUpdatedV2"
+
 
 [tool.black]
 line-length = 100
