@@ -18,4 +18,5 @@ DUMMY_SITE = {
     "id": 1,
     "name": "dummy-site",
     "org_url": None,
+    "admins": ["dummy-admin"],
 }

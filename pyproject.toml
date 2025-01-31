@@ -46,6 +46,7 @@ reuse = ">=1.1.0"
 "mirrormanager.host.deleted.v2" = "mirrormanager_messages.host:HostDeletedV2"
 "mirrormanager.host.updated.v1" = "mirrormanager_messages.host:HostUpdatedV1"
 "mirrormanager.host.updated.v2" = "mirrormanager_messages.host:HostUpdatedV2"
+"mirrormanager.crawler.host.disabled.v1" = "mirrormanager_messages.host:HostCrawlerDisabledV1"
 
 
 [tool.black]

@@ -13,6 +13,7 @@ SITE_SCHEMA = {
         "id": {"type": "number"},
         "name": {"type": "string"},
         "org_url": {"type": ["string", "null"], "format": "uri"},
+        "admins": {"type": "array", "items": {"type": "string"}},
     },
     "required": ["id", "name", "org_url"],
 }

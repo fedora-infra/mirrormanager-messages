@@ -4,12 +4,15 @@
 
 """Unit tests for the message schema."""
 
+from copy import deepcopy
+
 import pytest
 from jsonschema import ValidationError
 
 from mirrormanager_messages.host import (
     HostAddedV1,
     HostAddedV2,
+    HostCrawlerDisabledV1,
     HostDeletedV1,
     HostDeletedV2,
     HostUpdatedV1,
@@ -28,7 +31,7 @@ def test_minimal_added():
     message.validate()
     assert message.url is None
     assert message.agent_name == "dummy-user"
-    assert message.usernames == ["dummy-user"]
+    assert message.usernames == ["dummy-admin", "dummy-user"]
     assert message.agent_avatar == (
         "https://seccdn.libravatar.org/avatar/"
         "18e8268125372e35f95ef082fd124e9274d46916efe2277417fa5fecfee31af1"
@@ -87,3 +90,49 @@ def test_v1_deleted():
     message.validate()
     assert message.deprecated is True
     assert str(message) == f"Host on site {DUMMY_SITE['id']} has been deleted"
+
+
+def test_crawler_disabled():
+    body = {
+        "host": deepcopy(DUMMY_HOST),
+        "site": DUMMY_SITE,
+        "crawled_at": "2025-01-31T00:00:00+00:00",
+        "logs_url": "http://example.com/logs",
+        "reason": "dummy reason",
+    }
+    body["host"]["url"] = "http://example.com/hosts/42"
+    message = HostCrawlerDisabledV1(body=body)
+    message.validate()
+    assert message.url == "http://example.com/hosts/42"
+    assert message.agent_name is None
+    assert message.usernames == ["dummy-admin"]
+    assert message.summary == "Host dummy-host has been disabled by MirrorManager's crawler"
+    assert (
+        str(message)
+        == """dummy reason
+
+The host was crawled at 2025-01-31T00:00:00+00:00.
+The crawl log can be found at http://example.com/logs
+The host's page in MirrorManager can be found at http://example.com/hosts/42
+"""
+    )
+
+
+def test_crawler_disabled_no_host_url():
+    body = {
+        "host": DUMMY_HOST,
+        "site": DUMMY_SITE,
+        "crawled_at": "2025-01-31T00:00:00+00:00",
+        "logs_url": "http://example.com/logs",
+        "reason": "dummy reason",
+    }
+    message = HostCrawlerDisabledV1(body=body)
+    message.validate()
+    assert (
+        str(message)
+        == """dummy reason
+
+The host was crawled at 2025-01-31T00:00:00+00:00.
+The crawl log can be found at http://example.com/logs
+"""
+    )
